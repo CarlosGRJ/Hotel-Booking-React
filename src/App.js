@@ -5,8 +5,6 @@ import { Login } from './auth/Login';
 import { Register } from './auth/Register';
 import { TopNav } from './components/TopNav';
 
-
-
 function App() {
    return (
       <BrowserRouter>
