@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { login } from '../actions/auth';
 import { LoginForm } from '../components/LoginForm';
+import { types } from '../types/types';
 
 export const Login = ({ history }) => {
    const [email, setEmail] = useState('carlos@test.com');
@@ -24,10 +25,10 @@ export const Login = ({ history }) => {
             window.localStorage.setItem('auth', JSON.stringify(res.data));
             // save user and token to redux
             dispatch({
-               type: 'LOGGED_IN_USER',
+               type: types.authLogin,
                payload: res.data,
             });
-            // history.push('/');
+            history.push('/dashboard');
          }
       } catch (error) {
          console.log(error);
