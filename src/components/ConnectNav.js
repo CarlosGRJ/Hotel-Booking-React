@@ -1,13 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Card, Avatar } from 'antd';
+import { Card, Avatar, Badge } from 'antd';
 import moment from 'moment';
+import { getAccountBalance } from '../actions/stripe';
+import { currencyFormatter } from '../actions/stripe';
 
 const { Meta } = Card;
+const { Ribbon } = Badge;
 
 export const ConnectNav = () => {
+   const [balance, setBalance] = useState(0);
    const { auth } = useSelector((state) => ({ ...state }));
    const { user } = auth;
+
+   useEffect(() => {
+      getAccountBalance(auth.token).then((res) => {
+         setBalance(res.data);
+      });
+   }, [auth]);
 
    return (
       <div className='d-flex justify-content-around'>
@@ -23,7 +33,13 @@ export const ConnectNav = () => {
             auth.user.stripe_seller &&
             auth.user.stripe_seller.charges_enabled && (
                <>
-                  <div>Pending balance</div>
+                  <Ribbon text='Available' color='grey'>
+                     <Card className='bg-light pt-1'>
+                        {balance && balance.pending && balance.pending.map((bp, i) => (
+                           <span key={i} className='lead'>{currencyFormatter(bp)}</span>
+                        ))}
+                     </Card>
+                  </Ribbon>
                   <div>Payout settings</div>
                </>
             )}
