@@ -1,13 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { HomeOutlined } from '@ant-design/icons';
+import { toast } from 'react-toastify';
 
 import { ConnectNav } from '../components/ConnectNav';
 import { DashboardNav } from '../components/DashboardNav';
+import { createConnectAccount } from '../actions/stripe';
 
 export const DashboardSeller = () => {
    const { auth } = useSelector((state) => ({ ...state }));
+   const [loading, setLoading] = useState(false);
+
+   const handleClick = async () => {
+      setLoading(true);
+
+      try {
+         const res = await createConnectAccount(auth.token);
+         console.log('res ', res); // get login link
+         window.location.href = res.data;
+      } catch (error) {
+         console.log(error);
+         toast.error('Stripe connect failed, Try again.');
+         setLoading(false);
+      }
+   };
 
    const connected = () => (
       <div className='container-fluid'>
@@ -35,8 +52,11 @@ export const DashboardSeller = () => {
                      MERN partners with stripe to transfer earnings to your bank
                      account
                   </p>
-                  <button className='btn btn-primary mb-3'>
-                     Setup Payouts
+                  <button
+                     disabled={loading}
+                     onClick={handleClick}
+                     className='btn btn-primary mb-3'>
+                     {loading ? 'Processing...' : 'Setup Payouts'}
                   </button>
                   <p className='text-muted'>
                      <small>
