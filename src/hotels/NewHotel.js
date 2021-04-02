@@ -1,17 +1,25 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import AlgoliaPlaces from 'algolia-places-react';
-import { DatePicker } from 'antd';
+import { DatePicker, Select } from 'antd';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
+import { createHotel } from '../actions/hotel';
 
-const config = {
-   appId: process.env.REACT_APP_ALGOLIA_APP_ID,
-   apiKey: process.env.REACT_APP_ALGOLIA_API_KEY,
-   language: 'en',
-   countries: ['mx'],
-};
+const { Option } = Select;
+
+// const config = {
+//    appId: process.env.REACT_APP_ALGOLIA_APP_ID,
+//    apiKey: process.env.REACT_APP_ALGOLIA_API_KEY,
+//    language: 'en',
+//    countries: ['mx'],
+// };
 
 export const NewHotel = () => {
+   // redux
+   const { auth } = useSelector((state) => ({ ...state }));
+   const { token } = auth;
+   // state FORM
    const [values, setValues] = useState({
       title: '',
       content: '',
@@ -29,8 +37,29 @@ export const NewHotel = () => {
 
    const { title, content, location, image, price, from, to, bed } = values;
 
-   const handleSubmit = (e) => {
-      //
+   const handleSubmit = async (e) => {
+      e.preventDefault(e);
+      // console.log('values', values);
+
+      const hotelData = new FormData();
+
+      hotelData.append('title', title);
+      hotelData.append('content', content);
+      hotelData.append('location', location);
+      hotelData.append('price', price);
+      image && hotelData.append('image', image);
+      hotelData.append('from', from);
+      hotelData.append('to', to);
+      hotelData.append('bed', bed);
+
+      console.log([...hotelData]);
+
+      const res = await createHotel(token, hotelData);
+      console.log('HOTEL CREATE RES ', res);
+      toast('New hotel is posted');
+      setTimeout(() => {
+         window.location.reload();
+      }, 1000);
    };
 
    const handleImageChange = (e) => {
@@ -102,14 +131,25 @@ export const NewHotel = () => {
                value={price}
             />
 
-            <input
+            {/* <input
                type='number'
                name='bed'
                onChange={handleChange}
                placeholder='Number of Beds'
                className='form-control m-2'
                value={bed}
-            />
+            /> */}
+
+            <Select
+               onChange={(value) => setValues({ ...values, bed: value })}
+               className='w-100 m-2'
+               size='large'
+               placeholder='Number of beds'>
+               <Option key={1}>{1}</Option>
+               <Option key={2}>{2}</Option>
+               <Option key={3}>{3}</Option>
+               <Option key={4}>{4}</Option>
+            </Select>
          </div>
 
          <DatePicker
