@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { ConnectNav } from '../components/ConnectNav';
 import { DashboardNav } from '../components/DashboardNav';
 import { createConnectAccount } from '../actions/stripe';
-import { sellerHotels } from '../actions/hotel';
+import { deleteHotel, sellerHotels } from '../actions/hotel';
 import { SmallCard } from '../components/cards/SmallCard';
 
 export const DashboardSeller = () => {
@@ -38,6 +38,14 @@ export const DashboardSeller = () => {
       }
    };
 
+   const handleHotelDelete = async (hotelId) => {
+      if (!window.confirm('Are you sure?')) return;
+      deleteHotel(auth.token, hotelId).then((res) => {
+         toast.success('Hotel Deleted');
+         loadSellersHotels();
+      });
+   };
+
    const connected = () => (
       <div className='container-fluid'>
          <div className='row'>
@@ -58,6 +66,7 @@ export const DashboardSeller = () => {
                   h={h}
                   showViewMoreButton={false}
                   owner={true}
+                  handleHotelDelete={handleHotelDelete}
                />
             ))}
          </div>
