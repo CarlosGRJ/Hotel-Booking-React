@@ -31,3 +31,17 @@ export const deleteHotel = async (token, hotelId) =>
          Authorization: `Bearer ${token}`,
       },
    });
+
+export const read = async (hotelId) =>
+   await axios.get(`${process.env.REACT_APP_API}/hotel/${hotelId}`);
+
+export const updateHotel = async (token, data, hotelId) =>
+   await axios.put(
+      `${process.env.REACT_APP_API}/update-hotel/${hotelId}`,
+      data,
+      {
+         headers: {
+            Authorization: `Bearer ${token}`,
+         },
+      },
+   );
