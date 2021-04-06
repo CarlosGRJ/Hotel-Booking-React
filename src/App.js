@@ -15,6 +15,8 @@ import { NewHotel } from './hotels/NewHotel';
 import { StripeCallback } from './stripe/StripeCallback';
 import { EditHotel } from './hotels/EditHotel';
 import { ViewHotel } from './hotels/ViewHotel';
+import { StripeSuccess } from './stripe/StripeSuccess';
+import { StripeCancel } from './stripe/StripeCancel';
 
 function App() {
    return (
@@ -43,6 +45,16 @@ function App() {
                component={EditHotel}
             />
             <Route exact path='/hotel/:hotelId' component={ViewHotel} />
+            <PrivateRoute
+               exact
+               path='/stripe/success'
+               component={StripeSuccess}
+            />
+            <PrivateRoute
+               exact
+               path='/stripe/cancel'
+               component={StripeCancel}
+            />
          </Switch>
       </BrowserRouter>
    );
