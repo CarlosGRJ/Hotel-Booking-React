@@ -56,7 +56,7 @@ export const ConnectNav = () => {
                            balance.pending &&
                            balance.pending.map((bp, i) => (
                               <span key={i} className='lead'>
-                                 {currencyFormatter(bp)}
+                                 ${currencyFormatter(bp)}
                               </span>
                            ))}
                      </Card>

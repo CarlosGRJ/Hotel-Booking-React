@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { diffDays, read } from '../actions/hotel';
 import { useSelector } from 'react-redux';
+import { loadStripe } from '@stripe/stripe-js';
+import { getSessionId } from '../actions/stripe';
 
 export const ViewHotel = ({ match, history }) => {
    const [hotel, setHotel] = useState({});
    const [image, setImage] = useState('');
+   const [loading, setLoading] = useState(false);
 
    const { auth } = useSelector((state) => ({ ...state }));
 
@@ -19,14 +22,20 @@ export const ViewHotel = ({ match, history }) => {
       setImage(`${process.env.REACT_APP_API}/hotel/image/${res.data._id}`);
    };
 
-   const handleClick = (e) => {
+   const handleClick = async (e) => {
       e.preventDefault();
-
+      setLoading(true);
       if (!auth) history.push('/login');
 
-      console.log(
-         'get session id from stripe to show a button > checkout with stripe',
-      );
+      // console.log(auth.token, match.params.hotelId);
+      const res = await getSessionId(auth.token, match.params.hotelId);
+      // console.log('get sessionid response ', res.data.sessionId);
+      const stripe = await loadStripe(process.env.REACT_APP_STRIPE_KEY);
+      stripe
+         .redirectToCheckout({
+            sessionId: res.data.sessionId,
+         })
+         .then((result) => console.log(result));
    };
 
    return (
@@ -71,8 +80,13 @@ export const ViewHotel = ({ match, history }) => {
                   <br />
                   <button
                      onClick={handleClick}
-                     className='btn btn-block btn-lg btn-primary mt-3'>
-                     {auth && auth.token ? 'Book Now' : 'Loogin to Book'}
+                     className='btn btn-block btn-lg btn-primary mt-3'
+                     disabled={loading}>
+                     {loading
+                        ? 'Loading...'
+                        : auth && auth.token
+                        ? 'Book Now'
+                        : 'Loogin to Book'}
                   </button>
                </div>
             </div>
