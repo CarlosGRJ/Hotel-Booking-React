@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { diffDays } from '../../actions/hotel';
 import { currencyFormatter } from '../../actions/stripe';
+import { OrderModal } from '../modals/OrderModal';
 
 export const BookingCard = ({ hotel, session, orderedBy }) => {
+   const [showModal, setShowModal] = useState(false);
+
    const history = useHistory();
 
    return (
@@ -44,23 +47,33 @@ export const BookingCard = ({ hotel, session, orderedBy }) => {
                      <p className='card-text'>
                         <span className='float-right text-primary'>
                            for {diffDays(hotel.from, hotel.to)}{' '}
-                           {diffDays(hotel.from, hotel.to) <= 1 ? 'day' : 'days'}
+                           {diffDays(hotel.from, hotel.to) <= 1
+                              ? 'day'
+                              : 'days'}
                         </span>
                      </p>
                      <p className='card-text'>{hotel.bed} bed</p>
                      <p className='card-text'>
-                        Available from {new Date(hotel.from).toLocaleDateString()}
+                        Available from{' '}
+                        {new Date(hotel.from).toLocaleDateString()}
                      </p>
 
-                     {/* <div className='d-flex justify-content-between h4'>
-                        {showViewMoreButton && (
-                           <button
-                              onClick={() => history.push(`/hotel/${h._id}`)}
-                              className='btn btn-primary'>
-                              Show more
-                           </button>
-                        )}
-                     </div> */}
+                     {showModal && (
+                        <OrderModal
+                           session={session}
+                           orderedBy={orderedBy}
+                           showModal={showModal}
+                           setShowModal={setShowModal}
+                        />
+                     )}
+
+                     <div className='d-flex justify-content-between h4'>
+                        <button
+                           onClick={() => setShowModal(!showModal)}
+                           className='btn btn-primary'>
+                           Show Payment info
+                        </button>
+                     </div>
                   </div>
                </div>
             </div>
