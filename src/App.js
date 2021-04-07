@@ -47,7 +47,7 @@ function App() {
             <Route exact path='/hotel/:hotelId' component={ViewHotel} />
             <PrivateRoute
                exact
-               path='/stripe/success'
+               path='/stripe/success/:hotelId'
                component={StripeSuccess}
             />
             <PrivateRoute
